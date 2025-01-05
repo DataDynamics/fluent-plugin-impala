@@ -54,3 +54,16 @@ You can generate configuration template:
 ```
 $ fluent-plugin-config-format filter impala
 ```
+## Gem 수동 설치
+
+다음의 커맨드를 실행하면 관련 gem을 `vendor/cache` 디렉토리에 모두 다운로드합니다.
+
+```
+# bundle package
+```
+
+추후 오프라인 환경에서 설치를 하는 경우 다음의 커맨드를 이용할 수 있습니다.
+
+```
+# gem install --local gem_file.gem
+```
