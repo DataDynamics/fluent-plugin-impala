@@ -10,15 +10,15 @@ module Fluent
 
       def run
         print "Impala Run Started\n"
-        if record["message"].include?("THRIFT_EAGAIN (timed out)")
+        if record[:message].include?("THRIFT_EAGAIN (timed out)")
           @record.store("type", "TIMEOUT")
           @record
         end
-        if record["message"].include?("Invalid or unknown query handle")
+        if record[:message].include?("Invalid or unknown query handle")
           @record.store("type", "INVALID_HANDLE")
           @record
         end
-        if record["message"].include?("Exec() query_id=")
+        if record[:message].include?("Exec() query_id=")
           @record.store("type", "QUERY")
           @record.store("query", impala_query(record["message"]))
           @record

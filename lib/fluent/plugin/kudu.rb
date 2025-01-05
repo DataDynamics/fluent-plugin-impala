@@ -11,27 +11,28 @@ module Fluent
       def run
         print "Kudu Run Started\n"
 
-        if @record["message"].include?("The service queue is full")
+        print @record
+
+        if @record[:message].include?("The service queue is full")
           @record.store("type", "BACKPRESSURE")
-          @record.store("items", kudu_thread_pool_item(@record["message"]))
-          @record
+          @record.store("items", kudu_thread_pool_item(@record[:message]))
         end
 
-        if @record["message"].include?("exceeded configure scan timeout")
-          r = kudu_scan_timeout(@record["message"])
+        if @record[:message].include?("exceeded configure scan timeout")
+          r = kudu_scan_timeout(@record[:message])
           @record.store("type", "SCAN_TIMEOUT")
           @record.store("current_running_tasks", r["current_running_tasks"])
           @record.store("max_running_tasks", r["max_running_tasks"])
           @record.store("current_queued_tasks", r["current_queued_tasks"])
           @record.store("max_queued_tasks", r["max_queued_tasks"])
-          @record.store("items", r["items"])
-          @record
+          @record.store("items", r[:items])
         end
 
-        if @record["message"]..include?("THRIFT_EAGAIN (timed out)")
+        if @record[:message]..include?("THRIFT_EAGAIN (timed out)")
           @record.store("type", "THRIFT_EAGAIN_TIMEOUT")
-          @record
         end
+
+        @record
       end
 
       def kudu_backpressure(message)

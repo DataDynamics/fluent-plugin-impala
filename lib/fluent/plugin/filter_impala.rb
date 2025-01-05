@@ -19,11 +19,12 @@ module Fluent
 
       # tag string, time Fluent::EventTime or Integer, record Hash
       def filter(tag, time, record)
-        print "Filter Started\n"
         if @engine == "impala"
-          Impala.new(record).run
+          r = Impala.new(record).run
+          print r
         else
-          Kudu.new(record).run
+          r = Kudu.new(record).run
+          print r
         end
       end
     end
