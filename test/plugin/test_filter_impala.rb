@@ -7,8 +7,7 @@ class ImpalaFilterTest < Test::Unit::TestCase
   end
 
   CONFIG = %[
-    param1 value1
-    param2 value2
+    engine kudu
   ]
 
   test "failure" do
@@ -43,10 +42,10 @@ class ImpalaFilterTest < Test::Unit::TestCase
     filtered_records = filter(CONFIG, messages6)
 
     print filtered_records
+    print "\n"
   end
 
   def filter(config, messages)
-    print config
     driver = create_driver(config)
     driver.run(default_tag: "test") do
       messages.each do |message|
