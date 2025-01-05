@@ -1,13 +1,16 @@
 require "fluent/plugin/filter"
 require "fluent/plugin/kudu.rb"
 require "fluent/plugin/impala.rb"
+require 'rufus-scheduler'
+require 'prometheus/client'
+require 'prometheus/client/push'
 
 module Fluent
   module Plugin
     class ImpalaFilter < Fluent::Plugin::Filter
       Fluent::Plugin.register_filter("impala", self)
 
-      attr_accessor :engine
+      attr_accessor :engine, :scheduler, :registry, :gateway
 
       def configure(conf)
         super
@@ -15,6 +18,14 @@ module Fluent
         print "Configured Engine: #{conf["engine"]}\n"
 
         @engine = conf["engine"]
+        @gateway = conf["gateway"]
+
+        @scheduler = Rufus::Scheduler.new
+        @registry = Prometheus::Client.registry
+
+        @scheduler.every '15s' do
+          print "Scheduler Runned\n"
+        end
       end
 
       # tag string, time Fluent::EventTime or Integer, record Hash

@@ -1,11 +1,16 @@
+require 'prometheus/client'
+require 'prometheus/client/push'
+require 'socket'
+
 module Fluent
   module Plugin
     class Kudu
 
-      attr_accessor :record
+      attr_accessor :record, :hostname
 
       def initialize(record)
         @record = record
+        @hostname = Socket.gethostname
       end
 
       def run
@@ -32,6 +37,8 @@ module Fluent
           @record.store("type", "THRIFT_EAGAIN_TIMEOUT")
         end
 
+        @record.store("job", "fluentd-plugin-kudu")
+        @record.store("instance", @hostname)
         @record
       end
 

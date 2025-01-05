@@ -1,28 +1,36 @@
+require 'prometheus/client'
+require 'prometheus/client/push'
+require 'socket'
+
 module Fluent
   module Plugin
     class Impala
 
-      attr_accessor :record
+      attr_accessor :record, :hostname
 
       def initialize(record)
         @record = record
+        @hostname = Socket.gethostname
       end
 
       def run
         print "Impala Run Started\n"
         if record[:message].include?("THRIFT_EAGAIN (timed out)")
           @record.store("type", "TIMEOUT")
-          @record
         end
+
         if record[:message].include?("Invalid or unknown query handle")
           @record.store("type", "INVALID_HANDLE")
-          @record
         end
+
         if record[:message].include?("Exec() query_id=")
           @record.store("type", "QUERY")
           @record.store("query", impala_query(record["message"]))
-          @record
         end
+
+        @record.store("job", "fluentd-plugin-impala")
+        @record.store("instance", @hostname)
+        @record
       end
 
       def impala_query(message)
