@@ -17,6 +17,13 @@
 # rbenv install 3.2.6
 # gem install fluentd -v '1.16.6'
 ```
+### Windows
+
+```
+# MSYS2 and MINGW development toolchain 선택
+ridk install
+ridk enable
+```
 
 ## Installation
 
