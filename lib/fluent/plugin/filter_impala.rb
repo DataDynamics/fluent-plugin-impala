@@ -12,6 +12,7 @@ module Fluent
       # tag string, time Fluent::EventTime or Integer, record Hash
       def filter(tag, time, record)
         print "FILTER STARTED"
+        print record
         record
       end
 
@@ -19,15 +20,67 @@ module Fluent
         result = {}
         matched = message.include?("The service queue is full")
         if matched
-          result.merge!(kudu_thread_pool_task_running(message))
-          result.merge!(kudu_thread_pool_task_queued(message))
-          result.merge!(kudu_thread_pool_item(message))
+          result.merge!(_kudu_thread_pool_task_running(message))
+          result.merge!(_kudu_thread_pool_task_queued(message))
+          result.merge!(_kudu_thread_pool_item(message))
           result
         end
         result
       end
 
-      def kudu_thread_pool_task_running(message)
+      def kudu_scan_timeout(message)
+        result = {}
+        matched = message.include?("exceeded configure scan timeout")
+        if matched
+          result.merge!(_kudu_scan_timout_table_name(message))
+          result
+        end
+        result
+      end
+
+      def impala_thrift_eagain_timeout(message)
+        matched = message.include?("THRIFT_EAGAIN (timed out)")
+        if matched
+          true
+        end
+        false
+      end
+
+      def impala_invalid_handle(message)
+        matched = message.include?("Invalid or unknown query handle")
+        if matched
+          true
+        end
+        false
+      end
+
+      def impala_query(message)
+        result = {}
+        matched = message.include?("Exec() query_id=")
+        if matched
+          start_index = message.index("stmt=") + 1
+          end_index = message.length - 1
+          query = message[start_index..end_index].strip
+          result.store("query", query)
+        end
+        result.store("query", "")
+        result
+      end
+
+      #############################################################
+      # Internal Use Only
+      #############################################################
+
+      def _kudu_scan_timout_table_name(message)
+        result = {}
+        start_index = message.index("for Kudu table ‘") + 1
+        end_index = message.index("' : Time out : exceeded configure scan timeout") - 1
+        table_name = message[start_index..end_index].strip
+        result.store("table_name", table_name)
+        result
+      end
+
+      def _kudu_thread_pool_task_running(message)
         result = {}
         start_index = message.index("(") + 1
         end_index = message.index("tasks running") - 1
@@ -37,7 +90,7 @@ module Fluent
         result
       end
 
-      def kudu_thread_pool_task_queued(message)
+      def _kudu_thread_pool_task_queued(message)
         result = {}
         start_index = message.index("tasks running , ") + 1
         end_index = message.index("tasks queued") - 1
@@ -47,7 +100,7 @@ module Fluent
         result
       end
 
-      def kudu_thread_pool_item(message)
+      def _kudu_thread_pool_item(message)
         result = {}
         start_index = message.index("The service queue is full; it has ") + 1
         end_index = message.index("items") - 1

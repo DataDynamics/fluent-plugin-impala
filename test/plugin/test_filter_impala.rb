@@ -40,17 +40,17 @@ class ImpalaFilterTest < Test::Unit::TestCase
       }
     ]
 
-    filtered_records = filter(CONFIG, messages)
+    filtered_records = filter(CONFIG, messages6)
 
     print filtered_records
   end
 
   def filter(config, messages)
     print config
-    d = create_driver(config)
-    d.run(default_tag: "test") do
+    driver = create_driver(config)
+    driver.run(default_tag: "test") do
       messages.each do |message|
-        d.feed(message)
+        driver.feed(message) # 로그 메시지를 주입
       end
     end
   end
