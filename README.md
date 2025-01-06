@@ -8,6 +8,8 @@
 
 * Ruby 3.2.6
 * Fluent 1.16.6
+* Prometheus Client 4.2.3
+* Rufus Scheduler 3.9.2
 
 ### macOS
 
