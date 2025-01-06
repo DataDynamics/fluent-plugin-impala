@@ -15,9 +15,15 @@
 # brew install rbenv ruby-build
 # eval "$(rbenv init -)"
 # rbenv install 3.2.6
+# rbenv global 3.2.6
+# ruby --version
 # gem install fluentd -v '1.16.6'
 # gem install rufus-scheduler
+# gem update --system 3.6.2
+# gem --version
 ```
+
+
 ### Windows
 
 ```
