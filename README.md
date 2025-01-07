@@ -100,7 +100,7 @@ $ ridk install
 $ ridk enable
 ```
 
-## Flugin Plugin Installation
+## Fluent Plugin Installation
 
 ```bash
 $ cd <PLUGIN_HOME>
