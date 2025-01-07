@@ -35,9 +35,8 @@ module Fluent
           @record.store("table_name", @record[:message][start_index..end_index].strip)
         end
 
-        if @record[:message]..include?("THRIFT_EAGAIN (timed out)")
-          @record.store("type", "SCAN_TIMEOUT")
-          @record.store("items", r[:items])
+        if @record[:message].include?("Failed to write batch")
+          @record.store("type", "WRITER_TIMEOUT")
         end
 
         @record.store("job", "fluentd-plugin-kudu")

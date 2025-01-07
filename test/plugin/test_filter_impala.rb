@@ -33,12 +33,19 @@ class ImpalaFilterTest < Test::Unit::TestCase
 
     r = filter(CONFIG, messages6)
 
-    # Validation ==> "type"=>"BACKPRESSURE", "items"=>"50", "current_running_tasks"=>1, "max_running_tasks"=>1, "current_queued_tasks"=>100, "max_queued_tasks"=>100
     assert_equal "BACKPRESSURE", r[0]["type"]
     assert_equal 1, r[0]["current_running_tasks"]
     assert_equal 1, r[0]["max_running_tasks"]
     assert_equal 100, r[0]["current_queued_tasks"]
     assert_equal 100, r[0]["max_queued_tasks"]
+  end
+
+  test "messages7_test" do
+    assert_true true, messages7[0][:message].include?("Failed to write batch")
+
+    r = filter(CONFIG, messages7)
+
+    assert_equal "WRITER_TIMEOUT", r[0]["type"]
   end
 
   ##########################################################
