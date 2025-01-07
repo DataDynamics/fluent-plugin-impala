@@ -14,10 +14,6 @@ module Fluent
       end
 
       def run
-        print "Kudu Run Started\n"
-
-        print @record
-
         if @record[:message].include?("The service queue is full")
           @record.store("type", "BACKPRESSURE")
           @record.store("items", kudu_thread_pool_item(@record[:message])["items"])
