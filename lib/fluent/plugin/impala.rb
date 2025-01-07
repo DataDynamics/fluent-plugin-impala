@@ -12,19 +12,15 @@ module Fluent
       end
 
       def run
-
-        $log.debug "==================================\n\n"
-        $log.debug @record["message"]
-        $log.debug "==================================\n\n"
-        $log.debug @record["message"].to_s
-        $log.debug "==================================\n\n"
-
         if record["message"].include?("stmt=")
           @record.store("category", "prometheus")
           @record.store("type", "QUERY")
           @record.store("query", impala_query(record["message"]))
           @record.store("metric-type", "Counter")
           @record.store("metric-name", "impala_query_count")
+          @record.store("job", "fluentd-plugin-impala")
+          @record.store("instance", @hostname)
+          @record
         end
 
         if record["message"].include?("Invalid or unknown query handle")
@@ -32,6 +28,9 @@ module Fluent
           @record.store("type", "INVALID_HANDLE")
           @record.store("metric-type", "Counter")
           @record.store("metric-name", "impala_invalid_handle_count")
+          @record.store("job", "fluentd-plugin-impala")
+          @record.store("instance", @hostname)
+          @record
         end
 
         if record["message"].include?("THRIFT_EAGAIN (timed out)")
@@ -39,11 +38,10 @@ module Fluent
           @record.store("type", "THRIFT_TIMEOUT")
           @record.store("metric-type", "Counter")
           @record.store("metric-name", "impala_thrift_timeout_count")
+          @record.store("job", "fluentd-plugin-impala")
+          @record.store("instance", @hostname)
+          @record
         end
-
-        @record.store("job", "fluentd-plugin-impala")
-        @record.store("instance", @hostname)
-        @record
       end
 
       def impala_query(message)

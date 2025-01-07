@@ -23,6 +23,9 @@ module Fluent
           @record.store("max_running_tasks", r["max_running_tasks"])
           @record.store("current_queued_tasks", r["current_queued_tasks"])
           @record.store("max_queued_tasks", r["max_queued_tasks"])
+          @record.store("job", "fluentd-plugin-kudu")
+          @record.store("instance", @hostname)
+          @record
         end
 
         if record["message"].include?("exceeded configure scan timeout")
@@ -33,6 +36,9 @@ module Fluent
           start_index = record["message"].index("for Kudu table ‘") + "for Kudu table ‘".length
           end_index = record["message"].index("’ : Time out") - 1
           @record.store("table_name", record["message"][start_index..end_index].strip)
+          @record.store("job", "fluentd-plugin-kudu")
+          @record.store("instance", @hostname)
+          @record
         end
 
         if record["message"].include?("Failed to write batch")
@@ -40,11 +46,11 @@ module Fluent
           @record.store("type", "WRITER_TIMEOUT")
           @record.store("metric-type", "Counter")
           @record.store("metric-name", "kudu_write_batch_timeout_count")
+          @record.store("job", "fluentd-plugin-kudu")
+          @record.store("instance", @hostname)
+          @record
         end
 
-        @record.store("job", "fluentd-plugin-kudu")
-        @record.store("instance", @hostname)
-        @record
       end
 
       def kudu_backpressure(message)
