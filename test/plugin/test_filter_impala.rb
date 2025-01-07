@@ -33,7 +33,10 @@ class ImpalaFilterTest < Test::Unit::TestCase
 
     filtered_records = filter(CONFIG, messages6)
 
+    print "\n"
+    print "\n"
     print filtered_records
+    print "\n"
     print "\n"
   end
 

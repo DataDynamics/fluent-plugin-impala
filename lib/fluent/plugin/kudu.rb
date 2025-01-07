@@ -20,7 +20,7 @@ module Fluent
 
         if @record[:message].include?("The service queue is full")
           @record.store("type", "BACKPRESSURE")
-          @record.store("items", kudu_thread_pool_item(@record[:message]))
+          @record.store("items", kudu_thread_pool_item(@record[:message])["items"])
         end
 
         if @record[:message].include?("exceeded configure scan timeout")
@@ -81,7 +81,8 @@ module Fluent
 
       def kudu_thread_pool_item(message)
         result = {}
-        start_index = message.index("The service queue is full; it has ") + 1
+        pattern = "The service queue is full; it has "
+        start_index = message.index(pattern) + pattern.length
         end_index = message.index("items") - 1
         result.store("items", message[start_index..end_index].strip)
         result
