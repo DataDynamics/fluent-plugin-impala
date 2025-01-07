@@ -2,7 +2,7 @@ require "helper"
 require "fluent/plugin/filter_impala.rb"
 require "test/unit"
 
-class ImpalaFilterTest < Test::Unit::TestCase
+class KuduFilterTest < Test::Unit::TestCase
   setup do
     Fluent::Test.setup
   end
