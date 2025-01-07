@@ -13,13 +13,13 @@ module Fluent
 
       def run
 
-        $log.info "==================================\n\n"
-        $log.info record["message"]
-        $log.info "==================================\n\n"
-        $log.info record[:message].to_s
-        $log.info "==================================\n\n"
+        $log.debug "==================================\n\n"
+        $log.debug @record["message"]
+        $log.debug "==================================\n\n"
+        $log.debug @record["message"].to_s
+        $log.debug "==================================\n\n"
 
-        if record[:message].include?("stmt=")
+        if record["message"].include?("stmt=")
           @record.store("category", "prometheus")
           @record.store("type", "QUERY")
           @record.store("query", impala_query(record["message"]))
@@ -27,14 +27,14 @@ module Fluent
           @record.store("metric-name", "impala_query_count")
         end
 
-        if record[:message].include?("Invalid or unknown query handle")
+        if record["message"].include?("Invalid or unknown query handle")
           @record.store("category", "prometheus")
           @record.store("type", "INVALID_HANDLE")
           @record.store("metric-type", "Counter")
           @record.store("metric-name", "impala_invalid_handle_count")
         end
 
-        if record[:message].include?("THRIFT_EAGAIN (timed out)")
+        if record["message"].include?("THRIFT_EAGAIN (timed out)")
           @record.store("category", "prometheus")
           @record.store("type", "THRIFT_TIMEOUT")
           @record.store("metric-type", "Counter")
