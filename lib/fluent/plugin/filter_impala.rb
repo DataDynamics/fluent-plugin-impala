@@ -11,8 +11,8 @@ module Fluent
 
       def configure(conf)
         super
-        print "Configure Started\n"
-        print "Configured Engine: #{conf["engine"]}\n"
+        log.debug "Impala Plugin Configure Started\n"
+        log.debug "Impala Plugin - Engine: #{conf["engine"]}\n"
 
         @engine = conf["engine"]
       end
