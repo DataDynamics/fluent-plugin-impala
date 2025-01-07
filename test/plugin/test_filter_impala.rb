@@ -20,6 +20,8 @@ class ImpalaFilterTest < Test::Unit::TestCase
 
     r = filter(CONFIG, messages1)
 
+    print r
+
     assert_equal "QUERY", r[0]["type"]
   end
 
@@ -28,6 +30,8 @@ class ImpalaFilterTest < Test::Unit::TestCase
 
     r = filter(CONFIG, messages2)
 
+    print r
+
     assert_equal "INVALID_HANDLE", r[0]["type"]
   end
 
@@ -35,6 +39,8 @@ class ImpalaFilterTest < Test::Unit::TestCase
     assert_true true, messages3[0][:message].include?("THRIFT_EAGAIN (timed out)")
 
     r = filter(CONFIG, messages3)
+
+    print r
 
     assert_equal "THRIFT_TIMEOUT", r[0]["type"]
   end

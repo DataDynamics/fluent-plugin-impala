@@ -20,6 +20,8 @@ class ImpalaFilterTest < Test::Unit::TestCase
 
     r = filter(CONFIG, messages5)
 
+    print r
+
     assert_equal "SCAN_TIMEOUT", r[0]["type"]
     assert_equal "nc.d_so", r[0]["table_name"]
   end
@@ -28,6 +30,8 @@ class ImpalaFilterTest < Test::Unit::TestCase
     assert_true true, messages6[0][:message].include?("The service queue is full")
 
     r = filter(CONFIG, messages6)
+
+    print r
 
     assert_equal "BACKPRESSURE", r[0]["type"]
     assert_equal 1, r[0]["current_running_tasks"]
@@ -40,6 +44,8 @@ class ImpalaFilterTest < Test::Unit::TestCase
     assert_true true, messages7[0][:message].include?("Failed to write batch")
 
     r = filter(CONFIG, messages7)
+
+    print r
 
     assert_equal "WRITER_TIMEOUT", r[0]["type"]
   end
