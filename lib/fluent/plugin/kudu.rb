@@ -1,5 +1,3 @@
-require 'prometheus/client'
-require 'prometheus/client/push'
 require 'socket'
 
 module Fluent
@@ -15,7 +13,10 @@ module Fluent
 
       def run
         if @record[:message].include?("The service queue is full")
+          @record.store("category", "prometheus")
           @record.store("type", "BACKPRESSURE")
+          @record.store("metric-type", "Counter")
+          @record.store("metric-name", "kudu_backpressure_count")
           @record.store("items", kudu_thread_pool_item(@record[:message])["items"])
           r = kudu_backpressure(@record[:message])
           @record.store("current_running_tasks", r["current_running_tasks"])
@@ -25,14 +26,20 @@ module Fluent
         end
 
         if @record[:message].include?("exceeded configure scan timeout")
+          @record.store("category", "prometheus")
           @record.store("type", "SCAN_TIMEOUT")
+          @record.store("metric-type", "Counter")
+          @record.store("metric-name", "kudu_scan_timeout_count")
           start_index = @record[:message].index("for Kudu table ‘") + "for Kudu table ‘".length
           end_index = @record[:message].index("’ : Time out") - 1
           @record.store("table_name", @record[:message][start_index..end_index].strip)
         end
 
         if @record[:message].include?("Failed to write batch")
+          @record.store("category", "prometheus")
           @record.store("type", "WRITER_TIMEOUT")
+          @record.store("metric-type", "Counter")
+          @record.store("metric-name", "kudu_write_batch_timeout_count")
         end
 
         @record.store("job", "fluentd-plugin-kudu")
