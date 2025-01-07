@@ -64,30 +64,30 @@ Fluent Plugin을 개발하기 위해서는 다음의 조건을 충족시켜야 �
 
 macOS에서는 Ruby 설치를 위해서 다음의 커맨드를 실행할 수 있습니다.
 
-```
-# brew install rbenv ruby-build
-# eval "$(rbenv init -)"
-# rbenv install 3.2.6
-# rbenv global 3.2.6
-# ruby --version
-# gem install fluentd -v '1.16.6'
-# gem install rufus-scheduler
-# gem update --system 3.6.2
-# gem --version
+```bash
+$ brew install rbenv ruby-build
+$ eval "$(rbenv init -)"
+$ rbenv install 3.2.6
+$ rbenv global 3.2.6
+$ ruby --version
+$ gem install fluentd -v '1.16.6'
+$ gem install rufus-scheduler
+$ gem update --system 3.6.2
+$ gem --version
 ```
 
 RHEL 등의 환경에서는 다음의 커맨드를 실행할 수 있습니다. 
 
-```
-# brew install rbenv ruby-build
-# eval "$(rbenv init -)"
-# rbenv install 3.2.6
-# rbenv global 3.2.6
-# ruby --version
-# gem install fluentd -v '1.16.6'
-# gem install rufus-scheduler
-# gem update --system 3.6.2
-# gem --version
+```bash
+$ brew install rbenv ruby-build
+$ eval "$(rbenv init -)"
+$ rbenv install 3.2.6
+$ rbenv global 3.2.6
+$ ruby --version
+$ gem install fluentd -v '1.16.6'
+$ gem install rufus-scheduler
+$ gem update --system 3.6.2
+$ gem --version
 ```
 
 ### Windows
@@ -96,15 +96,15 @@ RHEL 등의 환경에서는 다음의 커맨드를 실행할 수 있습니다.
 
 ```
 # MSYS2 and MINGW development toolchain 선택
-ridk install
-ridk enable
+$ ridk install
+$ ridk enable
 ```
 
 ## Flugin Plugin Installation
 
 ### RubyGems
 
-```
+```bash
 $ gem install fluent-plugin-impala
 ```
 
@@ -118,7 +118,7 @@ gem "fluent-plugin-impala"
 
 And then execute:
 
-```
+```bash
 $ bundle
 ```
 
@@ -126,19 +126,19 @@ $ bundle
 
 You can generate configuration template:
 
-```
+```bash
 $ fluent-plugin-config-format filter impala
 ```
 ## Gem 수동 설치
 
 다음의 커맨드를 실행하면 관련 gem을 `vendor/cache` 디렉토리에 모두 다운로드합니다.
 
-```
-# bundle package
+```bash
+$ bundle package
 ```
 
 추후 오프라인 환경에서 설치를 하는 경우 다음의 커맨드를 이용할 수 있습니다.
 
-```
-# gem install --local gem_file.gem
+```bash
+$ gem install --local gem_file.gem
 ```
