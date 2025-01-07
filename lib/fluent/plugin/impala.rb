@@ -12,6 +12,13 @@ module Fluent
       end
 
       def run
+
+        print "\n\n"
+        print record["message"]
+        print "\n\n"
+        print record[:message].to_s
+        print "\n\n"
+
         if record[:message].include?("stmt=")
           @record.store("category", "prometheus")
           @record.store("type", "QUERY")

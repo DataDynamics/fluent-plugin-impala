@@ -106,7 +106,141 @@ $ ridk enable
 $ cd <PLUGIN_HOME>
 $ /opt/fluent/bin/gem build fluent-plugin-impala.gemspec
 $ /opt/fluent/bin/gem install fluent-plugin-impala-0.1.0.gem
-$ ls -lsa /opt/fluent/lib/ruby/gems/3.2.0/gems
+$ ls -lsa /opt/fluent/lib/ruby/gems/3.2.0/gems/fluent-plugin-impala-0.1.0
 ```
 
+## Fluent Configuration
 
+```
+$ cat /etc/fluent/fluentd.conf
+...
+########################
+## IMPALA, KUDU
+########################
+
+<source>
+  @type tail
+  path /var/log/impalad/impalad.*
+  exclude_path ["/var/log/impalad/*.gz"]
+  tag impala.daemon
+  <parse>
+		@type none
+  </parse>
+  pos_file /var/log/fluent/impalad.pos
+  refresh_interval 5s
+</source>
+
+<filter kudu.tserver>
+  @type grep
+  <regexp>
+    key message
+    pattern /Timed out: RequestConsensusVote RPC/
+  </regexp>
+
+#  <or>
+#	  <regexp>
+#	    key message
+#	    pattern /Timed out: RequestConsensusVote RPC/
+#	  </regexp>
+#	  <regexp>
+#	    key message
+#	    pattern /The service queue is full/
+#	  </regexp>
+#	  <regexp>
+#	    key message
+#	    pattern /exceeded configure scan timeout/
+#	  </regexp>
+#	  <regexp>
+#	    key message
+#	    pattern /backpressure/
+#	  </regexp>
+#  </or>
+</filter>
+
+<filter impala.daemon>
+  @type impala
+  engine impala
+#  <regexp>
+#    key message                                                       k
+#    pattern /Exec\(\) query_id=/
+#  </regexp>
+#
+#  <or>
+#	  <regexp>
+#	    key message
+#	    pattern /THRIFT_EAGAIN/|/Analyzing query/|/Invalid or unknown query handle/|/query_id=/
+#	  </regexp>
+#	  <regexp>
+#	    key message
+#	    pattern /Analyzing query/
+#	  </regexp>
+#	  <regexp>
+#	    key message
+#	    pattern /THRIFT_EAGAIN (timed out)/
+#	  </regexp>
+#	  <regexp>
+#	    key message
+#	    pattern /Invalid or unknown query handle/
+#	  </regexp>
+#	  <regexp>
+#	    key message
+#	    pattern /query_id=/
+#	  </regexp>
+#  </or>
+</filter>
+
+<match impala.**>
+  @type file
+  @id impala
+  path /var/log/fluent/impala
+  add_path_suffix true
+  path_suffix ".log"
+  append true
+  <buffer>
+    flush_mode interval
+    flush_interval 10s
+  </buffer>
+  <format>
+    @type json
+  </format>
+</match>
+
+<match kudu.**>
+  @type file
+  @id kudu
+  path /var/log/fluent/kudu
+  add_path_suffix true
+  path_suffix ".log"
+  append true
+  <buffer>
+    flush_mode interval
+    flush_interval 10s
+  </buffer>
+  <format>
+    @type json
+  </format>
+</match>
+```
+
+## Fluent Logging
+
+```
+$ cd /var/log/fluent
+$ tree
+.
+├── buffer
+│   └── td
+├── fluentd.log
+├── impala
+├── impala.20250107.log 
+├── impalad.pos
+└── kudu
+```
+
+## 트러블 슈팅
+
+* Fluent Custom Plugin은 반드시 `.gem` 파일을 생성해서 설치하도록 함
+* 플러그인 에러 발생시 단위 테스트 검증 철저
+```
+2025-01-07 11:42:20 -0500 [warn]: #0 fluent/log.rb:383:warn: dump an error event: error_class=NoMethodError error="undefined method `include?' for nil:NilClass" location="/opt/fluent/lib/ruby/gems/3.2.0/gems/fluent-plugin-impala-0.1.0/lib/fluent/plugin/impala.rb:15:in `run'" tag="impala.daemon" time=2025-01-07 11:42:20.076135672 -0500 record={"message"=>"I0107 11:41:50.339138 1139814 thrift-util.cc:196] TSocket::read() THRIFT_EAGAIN (timed out) after %f ms: \xEC\x95\x8C \xEC\x88\x98 \xEC\x97\x86\xEB\x8A\x94 \xEC\x98\xA4\xEB\xA5\x9830000"}
+```
