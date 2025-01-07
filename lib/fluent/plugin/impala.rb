@@ -13,11 +13,11 @@ module Fluent
 
       def run
 
-        log.debug "\n\n"
-        log.debug record["message"]
-        log.debug "\n\n"
-        log.debug record[:message].to_s
-        log.debug "\n\n"
+        log.info "==================================\n\n"
+        log.info record["message"]
+        log.info "==================================\n\n"
+        log.info record[:message].to_s
+        log.info "==================================\n\n"
 
         if record[:message].include?("stmt=")
           @record.store("category", "prometheus")
