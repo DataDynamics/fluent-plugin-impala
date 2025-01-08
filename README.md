@@ -79,8 +79,12 @@ $ gem --version
 RHEL 등의 환경에서는 다음의 커맨드를 실행할 수 있습니다. 
 
 ```bash
-$ brew install rbenv ruby-build
-$ eval "$(rbenv init -)"
+
+$ yum groupinstall -y "Development Tools"
+$ yum install -y readline-devel openssl-devel
+$ git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+$ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+$ echo 'eval "$(rbenv init -)"' >> ~/.bashrc
 $ rbenv install 3.2.6
 $ rbenv global 3.2.6
 $ ruby --version
@@ -224,6 +228,8 @@ $ cat /etc/fluent/fluentd.conf
 
 ## Fluent Logging
 
+Fluent의 로그 파일은 다음의 경로에 존재합니다.
+
 ```
 $ cd /var/log/fluent
 $ tree
@@ -237,10 +243,18 @@ $ tree
 └── kudu
 ```
 
-## 트러블 슈팅
+로그 파일에 로그를 남기기 위해서는 다음과 같이 플러그인 코드에 추가하도록 합니다.
 
-* Fluent Custom Plugin은 반드시 `.gem` 파일을 생성해서 설치하도록 함
-* 플러그인 에러 발생시 단위 테스트 검증 철저
+```ruby
+$log.debug "Impala Plugin - Engine: #{conf["engine"]}"
+```
+
+`fluentd.log` 파일에 에러가 로그가 남는 경우 다음과 같이 로그 메시지가 기록됩니다. 개발시에는 `/usr/lib/systemd/system/fluentd.service` 파일에 `fluentd -vv` 옵션을 추가하여 디버그 로그 모드로 개발하면 디버깅이 용이합니다.
+
 ```
 2025-01-07 11:42:20 -0500 [warn]: #0 fluent/log.rb:383:warn: dump an error event: error_class=NoMethodError error="undefined method `include?' for nil:NilClass" location="/opt/fluent/lib/ruby/gems/3.2.0/gems/fluent-plugin-impala-0.1.0/lib/fluent/plugin/impala.rb:15:in `run'" tag="impala.daemon" time=2025-01-07 11:42:20.076135672 -0500 record={"message"=>"I0107 11:41:50.339138 1139814 thrift-util.cc:196] TSocket::read() THRIFT_EAGAIN (timed out) after %f ms: \xEC\x95\x8C \xEC\x88\x98 \xEC\x97\x86\xEB\x8A\x94 \xEC\x98\xA4\xEB\xA5\x9830000"}
 ```
+
+## 트러블 슈팅
+
+* Fluent Custom Plugin은 반드시 `.gem` 파일을 생성해서 설치하도록 함
