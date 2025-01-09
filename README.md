@@ -258,3 +258,19 @@ $log.debug "Impala Plugin - Engine: #{conf["engine"]}"
 ## 트러블 슈팅
 
 * Fluent Custom Plugin은 반드시 `.gem` 파일을 생성해서 설치하도록 함
+
+## HTTPX
+
+```ruby
+# httpx.rb
+require "httpx"
+
+response = HTTPX.get("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY")
+puts response.body if response.status == 200
+
+# httpx2.rb
+require "httpx"
+
+response = HTTPX.post("https://jsonplaceholder.typicode.com/posts", :json => {'title' => 'foo', 'body' => 'bar', 'userID' => 1})
+puts response.body if response.status == 201
+```
