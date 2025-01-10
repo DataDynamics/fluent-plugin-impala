@@ -11,8 +11,8 @@ module Fluent
 
       def configure(conf)
         super
-        $log.debug "Impala Plugin Configure Started\n"
-        $log.debug "Impala Plugin - Engine: #{conf["engine"]}"
+        $log.info "Impala Plugin Configure Started\n"
+        $log.info "Impala Plugin - Engine: #{conf["engine"]}"
 
         @engine = conf["engine"]
       end
@@ -20,9 +20,9 @@ module Fluent
       # tag string, time Fluent::EventTime or Integer, record Hash
       def filter(tag, time, record)
         if @engine == "impala"
-          r = Impala.new(record).run
-        else
-          r = Kudu.new(record).run
+          Impala.new(record).run
+        elsif @engine == "kudu"
+          Kudu.new(record).run
         end
       end
     end

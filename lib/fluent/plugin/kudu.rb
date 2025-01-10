@@ -19,7 +19,7 @@ module Fluent
           @record.store("category", "prometheus")
           @record.store("type", "BACKPRESSURE")
           @record.store("metric-type", "Counter")
-          @record.store("metric-name", "kudu_backpressure_count")
+          @record.store("metric-name", "collect_kudu_backpressure_count")
           @record.store("items", kudu_thread_pool_item(record["message"])["items"])
           r = kudu_backpressure(record["message"])
           @record.store("current_running_tasks", r["current_running_tasks"])
@@ -36,7 +36,7 @@ module Fluent
           @record.store("category", "prometheus")
           @record.store("type", "SCAN_TIMEOUT")
           @record.store("metric-type", "Counter")
-          @record.store("metric-name", "kudu_scan_timeout_count")
+          @record.store("metric-name", "collect_kudu_scan_timeout_count")
           start_index = record["message"].index("for Kudu table ‘") + "for Kudu table ‘".length
           end_index = record["message"].index("’ : Time out") - 1
           @record.store("table_name", record["message"][start_index..end_index].strip)
@@ -51,7 +51,7 @@ module Fluent
           @record.store("category", "prometheus")
           @record.store("type", "WRITER_TIMEOUT")
           @record.store("metric-type", "Counter")
-          @record.store("metric-name", "kudu_write_batch_timeout_count")
+          @record.store("metric-name", "collect_kudu_write_batch_timeout_count")
           @record.store("job", "fluentd-plugin-kudu")
           @record.store("instance", @hostname)
           @record
@@ -64,7 +64,7 @@ module Fluent
           @record.store("category", "prometheus")
           @record.store("type", "CLIENT_TIMEOUT")
           @record.store("metric-type", "Counter")
-          @record.store("metric-name", "kudu_client_timeout_count")
+          @record.store("metric-name", "collect_kudu_client_timeout_count")
           @record.store("job", "fluentd-plugin-kudu")
           @record.store("instance", @hostname)
           @record
@@ -76,7 +76,7 @@ module Fluent
           @record.store("category", "prometheus")
           @record.store("type", "MEMORY_LIMIT_EXCEEDED")
           @record.store("metric-type", "Counter")
-          @record.store("metric-name", "kudu_soft_memory_limit_exceeded_count")
+          @record.store("metric-name", "collect_kudu_soft_memory_limit_exceeded_count")
           @record.store("job", "fluentd-plugin-kudu")
           @record.store("instance", @hostname)
           @record
