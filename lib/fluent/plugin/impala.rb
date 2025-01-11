@@ -13,28 +13,37 @@ module Fluent
 
       def run
         if record["message"].include?("stmt=")
+          prefix = "collect_impala_query"
           @record.store("category", "prometheus")
           @record.store("type", "QUERY")
           @record.store("query", impala_query(record["message"]))
           @record.store("metric-type", "Counter")
-          @record.store("metric-name", "collect_impala_query_count")
+          @record.store("metric-name", "#{prefix}_count")
+          @record.store("metric-prefix", prefix)
+          @record.store("metric-desc", "Impala Query 건수")
           @record
         end
 
         if record["message"].include?("Invalid or unknown query handle")
+          prefix = "collect_impala_invalid_handle"
           @record.store("category", "prometheus")
-          @record.store("type", "INVALID_HANDLE")
+          @record.store("type", "SYSTEM")
           @record.store("metric-type", "Counter")
-          @record.store("metric-name", "collect_impala_invalid_handle_count")
+          @record.store("metric-name", "#{prefix}_count")
+          @record.store("metric-prefix", prefix)
+          @record.store("metric-desc", "Invalid Query Handle 건수")
           @record
         end
 
         if record["message"].include?("THRIFT_EAGAIN (timed out)")
+          prefix = "collect_impala_thrift_timeout_count"
           @record.store("category", "prometheus")
-          @record.store("type", "THRIFT_TIMEOUT")
+          @record.store("type", "TIMEOUT")
           @record.store("metric-type", "Counter")
-          @record.store("metric-name", "collect_impala_thrift_timeout_count")
+          @record.store("metric-name", "#{prefix}_count")
+          @record.store("metric-prefix", prefix)
           @record
+          @record.store("metric-desc", "THRIFT EAGAIN Timeout 건수")
         end
       end
 
