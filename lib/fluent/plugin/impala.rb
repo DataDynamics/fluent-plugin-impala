@@ -18,8 +18,6 @@ module Fluent
           @record.store("query", impala_query(record["message"]))
           @record.store("metric-type", "Counter")
           @record.store("metric-name", "collect_impala_query_count")
-          @record.store("job", "fluentd-plugin-impala")
-          @record.store("instance", @hostname)
           @record
         end
 
@@ -28,8 +26,6 @@ module Fluent
           @record.store("type", "INVALID_HANDLE")
           @record.store("metric-type", "Counter")
           @record.store("metric-name", "collect_impala_invalid_handle_count")
-          @record.store("job", "fluentd-plugin-impala")
-          @record.store("instance", @hostname)
           @record
         end
 
@@ -38,8 +34,6 @@ module Fluent
           @record.store("type", "THRIFT_TIMEOUT")
           @record.store("metric-type", "Counter")
           @record.store("metric-name", "collect_impala_thrift_timeout_count")
-          @record.store("job", "fluentd-plugin-impala")
-          @record.store("instance", @hostname)
           @record
         end
       end
